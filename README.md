@@ -14,8 +14,8 @@ This repository contains a Python-based parallel image processing system. The pr
 6. Firewall: Default settings are sufficient.
 
 ### B. Deployment
-• Click Create to provision the resource.
-• Once the Status indicator turns green, click SSH to establish a secure shell connection.
+1. Click Create to provision the resource.
+2. Once the Status indicator turns green, click SSH to establish a secure shell connection.
 
 ## Part 2: Environment and Python Dependency Installation
 
