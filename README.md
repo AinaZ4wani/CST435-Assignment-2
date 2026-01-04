@@ -64,5 +64,5 @@ $ cd CST435-Assignment-2
 Execute the following command to run the concurrent.futures module on the VM:
 
 ```python
-$ spython run_concurrent.py
+$ python run_concurrent.py
 ```
