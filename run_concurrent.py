@@ -27,9 +27,6 @@ if __name__ == "__main__":
             if f.lower().endswith((".jpg", ".jpeg", ".png"))
         ]
 
-        # Optional: limit images for testing
-        # images = images[:25]
-
         print(f"\nStarting Concurrent Futures Pipeline with {len(images)} images from folder: {folder}")
         results = []
 
@@ -41,7 +38,7 @@ if __name__ == "__main__":
             duration = run_test(images, OUTPUT_DIR, num_threads)
             results.append({"thread": num_threads, "time": duration})
 
-        # Output results (MATCHING MP FORMAT)
+        # Output results
         print("\n" + "=" * 80)
         print(f"Concurrent Futures Performance Results ({len(images)} images in '{folder}' dataset)")
         print("=" * 80)
