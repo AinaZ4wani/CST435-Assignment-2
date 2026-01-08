@@ -27,7 +27,7 @@ def process_single_image(args):
         with Image.open(img_path) as img:
             arr = np.array(img.convert("RGB"))
 
-            # Image processing pipeline (IDENTICAL to multiprocessing)
+            # Image processing pipeline
             arr = filters.grayscale_conversion(arr)
             arr = filters.gaussian_blur(arr)
             arr = filters.sobel_edge_detection(arr)
