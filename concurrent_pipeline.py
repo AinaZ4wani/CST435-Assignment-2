@@ -2,21 +2,32 @@ import os
 import time
 import numpy as np
 from PIL import Image
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, as_completed
+import psutil
 import filters
 
 # --------------------------------
-# Worker function (optimized)
+# Worker function
 # --------------------------------
 def process_single_image(args):
     img_path, output_folder = args
     try:
+        pid = os.getpid()
+
+        # Get CPU core info (best effort)
+        try:
+            core_id = psutil.Process(pid).cpu_num()
+            core_info = f"CPU Core ID: {core_id}"
+        except Exception:
+            core_info = "CPU Core ID: N/A"
+
         filename = os.path.basename(img_path)
+        print(f"[{core_info} PID:{pid}] Processing image {filename}")
 
         with Image.open(img_path) as img:
-            arr = np.asarray(img.convert("RGB"))
+            arr = np.array(img.convert("RGB"))
 
-            # IDENTICAL image processing pipeline
+            # Image processing pipeline
             arr = filters.grayscale_conversion(arr)
             arr = filters.gaussian_blur(arr)
             arr = filters.sobel_edge_detection(arr)
@@ -30,11 +41,12 @@ def process_single_image(args):
         return True
 
     except Exception as e:
+        print(f"[PID {os.getpid()}] Error processing {img_path}: {e}")
         return False
 
 
 # --------------------------------
-# Optimized concurrent.futures run
+# Run concurrent.futures experiment
 # --------------------------------
 def run_test(image_list, output_dir, num_workers):
     tasks = [(p, output_dir) for p in image_list]
@@ -42,11 +54,10 @@ def run_test(image_list, output_dir, num_workers):
     start_time = time.time()
 
     with ProcessPoolExecutor(max_workers=num_workers) as executor:
-        # map() is MUCH faster than submit + as_completed
-        list(executor.map(
-            process_single_image,
-            tasks,
-            chunksize=max(1, len(tasks) // (num_workers * 4))
-        ))
+        futures = [executor.submit(process_single_image, task) for task in tasks]
+
+        # Ensure all tasks complete (dynamic scheduling)
+        for _ in as_completed(futures):
+            pass
 
     return time.time() - start_time
